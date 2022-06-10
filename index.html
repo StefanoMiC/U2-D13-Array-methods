@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+
+    <title>Books</title>
+</head>
+
+<body>
+    <div class="px-3 mb-4">
+        <h1>Book List</h1>
+        <input type="text" class="form-control d-none" id="search" placeholder="type a book name"
+            onchange="filterBooks(event)">
+
+        <!-- <button onclick="readOuter()">read outer array</button> -->
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+        crossorigin="anonymous"></script>
+    <script>
+
+        let outerArrayOfBooks = []
+
+        const filterBooks = (event) => {
+            const searchQuery = event.target.value
+            console.log("FROM FILTER", outerArrayOfBooks)
+
+            // fetch("https://striveschool-api.herokuapp.com/books")
+            //     .then(response => response.json())
+            //     .then(books => {
+
+            //         const filteredBooks = books.filter(book => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            //         renderBooks(filteredBooks)
+            //     })
+
+
+
+            const filteredBooks = outerArrayOfBooks.filter(book => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            renderBooks(filteredBooks)
+
+        }
+
+
+        const readOuter = () => console.log(outerArrayOfBooks)
+
+
+        window.onload = async () => {
+
+            try {
+                const responseObj = await fetch("https://striveschool-api.herokuapp.com/books")
+                const books = await responseObj.json()
+                console.log(books)
+
+                outerArrayOfBooks = [...books]
+                document.querySelector("input").classList.remove("d-none")
+
+                renderBooks(books)
+            } catch (err) {
+                console.log(err)
+            }
+
+            console.log("FROM WINDOW ONLOAD", outerArrayOfBooks)
+        }
+
+        const renderBooks = (array) => {
+            const grid = document.querySelector(".row")
+            grid.innerHTML = ""
+
+            if (Array.isArray(array)) {
+                array.forEach(book => {
+                    const col = document.createElement("div")
+                    col.className = "col-md-3"
+
+                    col.innerHTML =
+                        `<div class="card">
+                            <img src="${book.img}" class="card-img-top" alt="${book.title}" />
+                            <div class="card-body">
+                                <h5 class="card-title">${book.title}</h5>
+                                <p class="card-text">${book.category}</p>
+                                <a href="#" class="btn btn-primary">$${book.price}</a>
+                                </div>
+                                </div>`
+
+                    grid.appendChild(col)
+                })
+            } else {
+                alert("please provide a proper array")
+            }
+        }
+    </script>
+</body>
+
+</html>
